@@ -1,1 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GILLA Purple Menu</title>
 
+<style>
+:root {
+    --purple: #a020f0;
+    --glow: #d580ff;
+    --background: #100718;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 20px;
+    background: radial-gradient(circle, #301044, #09040e);
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 650px;
+    margin: 20px auto;
+    padding: 24px;
+    background: rgba(20, 8, 30, .96);
+    border: 2px solid var(--purple);
+    border-radius: 20px;
+    box-shadow: 0 0 25px var(--purple);
+}
+
+h1 {
+    color: var(--glow);
+    text-align: center;
+    text-shadow: 0 0 15px var(--purple);
+}
+
+.subtitle {
+    text-align: center;
+    color: #c9a4e8;
+}
+
+.section {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #7932a8;
+    border-radius: 12px;
+    background: #1b0c28;
+}
+
+h2 {
+    color: var(--glow);
+    font-size: 19px;
+}
+
+label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin: 14px 0;
+}
+
+button, select {
+    background: #7020a0;
+    border: 1px solid #d580ff;
+    border-radius: 9px;
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:active {
+    background: #a020f0;
+}
+
+input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    accent-color: #b040ff;
+}
+
+input[type="range"] {
+    accent-color: #bd55ff;
+    width: 130px;
+}
+
+.preview {
+    text-align: center;
+    padding: 22px;
+    margin-top: 18px;
+    background: #301044;
+    border-radius: 12px;
+    font-size: 20px;
+    border: 1px solid var(--glow);
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.status {
+    text-align: center;
+    color: #d580ff;
+    margin-top: 18px;
+}
+
+#panel[hidden] {
+    display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>💜 GILLA PURPLE MENU</h1>
+<p class="subtitle">VR Companion • Version 1.4.2</p>
+
+<button id="menuButton" style="width:100%">
+    CLOSE MENU
+</button>
+
+<div id="panel">
+
+<div class="preview">
+    🦍<br>
+    <strong>PURPLE HORROR MODE</strong>
+    <p id="previewText">Your custom menu is ready!</p>
+</div>
+
+<div class="section">
+<h2>🎨 Appearance</h2>
+
+<label>
+    Purple Theme
+    <input type="checkbox" id="purpleTheme" checked>
+</label>
+
+<label>
+    Glow Effects
+    <input type="checkbox" id="glow" checked>
+</label>
+
+<label>
+    Horror Effects
+    <input type="checkbox" id="horror">
+</label>
+
+<label>
+    Menu Animation
+    <input type="checkbox" id="animation" checked>
+</label>
+
+<label>
+    Menu Color
+    <select id="menuColor">
+        <option value="#a020f0">Purple</option>
+        <option value="#ff1744">Red</option>
+        <option value="#168cff">Blue</option>
+        <option value="#16d98b">Green</option>
+    </select>
+</label>
+</div>
+
+<div class="section">
+<h2>👤 Cosmetic Preview</h2>
+
+<label>
+    Cosmetic Style
+    <select id="cosmetic">
+        <option>Purple Horror</option>
+        <option>Ghost</option>
+        <option>Shadow</option>
+        <option>Neon</option>
+    </select>
+</label>
+
+<p id="cosmeticPreview">Current style: Purple Horror</p>
+</div>
+
+<div class="section">
+<h2>🔊 Sound Settings</h2>
+
+<label>
+    Sound Effects
+    <input type="checkbox" id="sound" checked>
+</label>
+
+<label>
+    Sound Volume
+    <input type="range" id="volume" min="0" max="100" value="50">
+</label>
+</div>
+
+<div class="section">
+<h2>⚙️ Extra Settings</h2>
+
+<label>
+    Show Status
+    <input type="checkbox" id="statusToggle" checked>
+</label>
+
+<label>
+    VR-Friendly Layout
+    <input type="checkbox" id="vrLayout" checked>
+</label>
+
+<label>
+    Remember Settings
+    <input type="checkbox" id="remember" checked>
+</label>
+</div>
+
+<div class="buttons">
+    <button id="save">💾 SAVE SETTINGS</button>
+    <button id="reset">🔄 RESET SETTINGS</button>
+</div>
+
+<p class="status" id="status">Menu Ready 💜</p>
+
+</div>
+</div>
+
+<script>
+const defaults = {
+    purpleTheme: true,
+    glow: true,
+    horror: false,
+    animation: true,
+    menuColor: "#a020f0",
+    cosmetic: "Purple Horror",
+    sound: true,
+    volume: 50,
+    statusToggle: true,
+    vrLayout: true,
+    remember: true
+};
+
+const controls = [
+    "purpleTheme", "glow", "horror", "animation",
+    "menuColor", "cosmetic", "sound", "volume",
+    "statusToggle", "vrLayout", "remember"
+];
+
+function getSettings() {
+    const settings = {};
+
+    controls.forEach(id => {
+        const element = document.getElementById(id);
+
+        settings[id] = element.type === "checkbox"
+            ? element.checked
+            : element.value;
+    });
+
+    return settings;
+}
+
+function applySettings(settings) {
+    controls.forEach(id => {
+        const element = document.getElementById(id);
+
+        if (!(id in settings)) return;
+
+        if (element.type === "checkbox") {
+            element.checked = settings[id];
+        } else {
+            element.value = settings[id];
+        }
+    });
+
+    updatePreview();
+}
+
+function updatePreview() {
+    const settings = getSettings();
+
+    document.documentElement.style.setProperty(
+        "--purple",
+        settings.menuColor
+    );
+
+    document.getElementById("cosmeticPreview").textContent =
+        "Current style: " + settings.cosmetic;
+
+    document.getElementById("previewText").textContent =
+        settings.horror ? "HORROR MODE ACTIVE" : "Your custom menu is ready!";
+
+    document.getElementById("status").hidden =
+        !settings.statusToggle;
+}
+
+document.getElementById("menuButton").onclick = function() {
+    const panel = document.getElementById("panel");
+    panel.hidden = !panel.hidden;
+    this.textContent = panel.hidden ? "OPEN MENU" : "CLOSE MENU";
+};
+
+document.getElementById("save").onclick = function() {
+    const settings = getSettings();
+
+    if (settings.remember) {
+        localStorage.setItem("gillaPurpleSettings",
+            JSON.stringify(settings));
+    }
+
+    document.getElementById("status").textContent =
+        "Settings saved! 💜";
+};
+
+document.getElementById("reset").onclick = function() {
+    applySettings(defaults);
+    localStorage.removeItem("gillaPurpleSettings");
+
+    document.getElementById("status").textContent =
+        "Settings reset!";
+};
+
+controls.forEach(id => {
+    document.getElementById(id).addEventListener("change", updatePreview);
+});
+
+const stored = localStorage.getItem("gillaPurpleSettings");
+
+if (stored) {
+    try {
+        applySettings(JSON.parse(stored));
+    } catch (error) {
+        applySettings(defaults);
+    }
+} else {
+    applySettings(defaults);
+}
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GILLA Purple Menu</title>
+
+<style>
+:root {
+    --purple: #a020f0;
+    --glow: #d580ff;
+    --background: #100718;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 20px;
+    background: radial-gradient(circle, #301044, #09040e);
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 650px;
+    margin: 20px auto;
+    padding: 24px;
+    background: rgba(20, 8, 30, .96);
+    border: 2px solid var(--purple);
+    border-radius: 20px;
+    box-shadow: 0 0 25px var(--purple);
+}
+
+h1 {
+    color: var(--glow);
+    text-align: center;
+    text-shadow: 0 0 15px var(--purple);
+}
+
+.subtitle {
+    text-align: center;
+    color: #c9a4e8;
+}
+
+.section {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #7932a8;
+    border-radius: 12px;
+    background: #1b0c28;
+}
+
+h2 {
+    color: var(--glow);
+    font-size: 19px;
+}
+
+label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin: 14px 0;
+}
+
+button, select {
+    background: #7020a0;
+    border: 1px solid #d580ff;
+    border-radius: 9px;
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:active {
+    background: #a020f0;
+}
+
+input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    accent-color: #b040ff;
+}
+
+input[type="range"] {
+    accent-color: #bd55ff;
+    width: 130px;
+}
+
+.preview {
+    text-align: center;
+    padding: 22px;
+    margin-top: 18px;
+    background: #301044;
+    border-radius: 12px;
+    font-size: 20px;
+    border: 1px solid var(--glow);
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.status {
+    text-align: center;
+    color: #d580ff;
+    margin-top: 18px;
+}
+
+#panel[hidden] {
+    display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>💜 GILLA PURPLE MENU</h1>
+<p class="subtitle">VR Companion • Version 1.4.2</p>
+
+<button id="menuButton" style="width:100%">
+    CLOSE MENU
+</button>
+
+<div id="panel">
+
+<div class="preview">
+    🦍<br>
+    <strong>PURPLE HORROR MODE</strong>
+    <p id="previewText">Your custom menu is ready!</p>
+</div>
+
+<div class="section">
+<h2>🎨 Appearance</h2>
+
+<label>
+    Purple Theme
+    <input type="checkbox" id="purpleTheme" checked>
+</label>
+
+<label>
+    Glow Effects
+    <input type="checkbox" id="glow" checked>
+</label>
+
+<label>
+    Horror Effects
+    <input type="checkbox" id="horror">
+</label>
+
+<label>
+    Menu Animation
+    <input type="checkbox" id="animation" checked>
+</label>
+
+<label>
+    Menu Color
+    <select id="menuColor">
+        <option value="#a020f0">Purple</option>
+        <option value="#ff1744">Red</option>
+        <option value="#168cff">Blue</option>
+        <option value="#16d98b">Green</option>
+    </select>
+</label>
+</div>
+
+<div class="section">
+<h2>👤 Cosmetic Preview</h2>
+
+<label>
+    Cosmetic Style
+    <select id="cosmetic">
+        <option>Purple Horror</option>
+        <option>Ghost</option>
+        <option>Shadow</option>
+        <option>Neon</option>
+    </select>
+</label>
+
+<p id="cosmeticPreview">Current style: Purple Horror</p>
+</div>
+
+<div class="section">
+<h2>🔊 Sound Settings</h2>
+
+<label>
+    Sound Effects
+    <input type="checkbox" id="sound" checked>
+</label>
+
+<label>
+    Sound Volume
+    <input type="range" id="volume" min="0" max="100" value="50">
+</label>
+</div>
+
+<div class="section">
+<h2>⚙️ Extra Settings</h2>
+
+<label>
+    Show Status
+    <input type="checkbox" id="statusToggle" checked>
+</label>
+
+<label>
+    VR-Friendly Layout
+    <input type="checkbox" id="vrLayout" checked>
+</label>
+
+<label>
+    Remember Settings
+    <input type="checkbox" id="remember" checked>
+</label>
+</div>
+
+<div class="buttons">
+    <button id="save">💾 SAVE SETTINGS</button>
+    <button id="reset">🔄 RESET SETTINGS</button>
+</div>
+
+<p class="status" id="status">Menu Ready 💜</p>
+
+</div>
+</div>
+
+<script>
+const defaults = {
+    purpleTheme: true,
+    glow: true,
+    horror: false,
+    animation: true,
+    menuColor: "#a020f0",
+    cosmetic: "Purple Horror",
+    sound: true,
+    volume: 50,
+    statusToggle: true,
+    vrLayout: true,
+    remember: true
+};
+
+const controls = [
+    "purpleTheme", "glow", "horror", "animation",
+    "menuColor", "cosmetic", "sound", "volume",
+    "statusToggle", "vrLayout", "remember"
+];
+
+function getSettings() {
+    const settings = {};
+
+    controls.forEach(id => {
+        const element = document.getElementById(id);
+
+        settings[id] = element.type === "checkbox"
+            ? element.checked
+            : element.value;
+    });
+
+    return settings;
+}
+
+function applySettings(settings) {
+    controls.forEach(id => {
+        const element = document.getElementById(id);
+
+        if (!(id in settings)) return;
+
+        if (element.type === "checkbox") {
+            element.checked = settings[id];
+        } else {
+            element.value = settings[id];
+        }
+    });
+
+    updatePreview();
+}
+
+function updatePreview() {
+    const settings = getSettings();
+
+    document.documentElement.style.setProperty(
+        "--purple",
+        settings.menuColor
+    );
+
+    document.getElementById("cosmeticPreview").textContent =
+        "Current style: " + settings.cosmetic;
+
+    document.getElementById("previewText").textContent =
+        settings.horror ? "HORROR MODE ACTIVE" : "Your custom menu is ready!";
+
+    document.getElementById("status").hidden =
+        !settings.statusToggle;
+}
+
+document.getElementById("menuButton").onclick = function() {
+    const panel = document.getElementById("panel");
+    panel.hidden = !panel.hidden;
+    this.textContent = panel.hidden ? "OPEN MENU" : "CLOSE MENU";
+};
+
+document.getElementById("save").onclick = function() {
+    const settings = getSettings();
+
+    if (settings.remember) {
+        localStorage.setItem("gillaPurpleSettings",
+            JSON.stringify(settings));
+    }
+
+    document.getElementById("status").textContent =
+        "Settings saved! 💜";
+};
+
+document.getElementById("reset").onclick = function() {
+    applySettings(defaults);
+    localStorage.removeItem("gillaPurpleSettings");
+
+    document.getElementById("status").textContent =
+        "Settings reset!";
+};
+
+controls.forEach(id => {
+    document.getElementById(id).addEventListener("change", updatePreview);
+});
+
+const stored = localStorage.getItem("gillaPurpleSettings");
+
+if (stored) {
+    try {
+        applySettings(JSON.parse(stored));
+    } catch (error) {
+        applySettings(defaults);
+    }
+} else {
+    applySettings(defaults);
+}
+</script>
+
+</body>
